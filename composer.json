@@ -1,0 +1,25 @@
+{
+  "name": "vereniging-lvak/pe-online-api",
+  "description": "PHP client library for PE-online attendance API",
+  "version": "1.3.0",
+  "type": "library",
+  "license": "MIT",
+  "require": {
+    "php": "^8.0",
+    "guzzlehttp/guzzle": "^7.0"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^9.0",
+    "friendsofphp/php-cs-fixer": "^3.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "PeOnline\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "PeOnline\\Tests\\": "tests/"
+    }
+  }
+}
