@@ -19,7 +19,7 @@ class PeOnlineClient
     private int $userId;
     private int $userKey;
 
-    public function __construct(string $baseUrl, int $userId, int $userKey)
+    public function __construct(string $baseUrl, string $userId, string $userKey)
     {
         $this->baseUrl = rtrim($baseUrl, '/');
         $this->userId = $userId;
@@ -75,7 +75,7 @@ class PeOnlineClient
     /**
      * Build the <Entry> XML according to the documentation.
      */
-    private function buildEntryXml(AttendanceRequest $request, int $userId, string $userKey): string
+    private function buildEntryXml(AttendanceRequest $request, string $userId, string $userKey): string
     {
         $doc = new \DOMDocument('1.0', 'utf-8');
         $doc->formatOutput = false;
@@ -86,7 +86,7 @@ class PeOnlineClient
         $settings = $doc->createElement('Settings');
         $entry->appendChild($settings);
 
-        $settings->appendChild($doc->createElement('userID', (string)$userId));
+        $settings->appendChild($doc->createElement('userID', $userId));
         $settings->appendChild($doc->createElement('userRole', 'EDU'));
         $settings->appendChild($doc->createElement('userKey', $userKey));
         $settings->appendChild($doc->createElement('orgID', (string)$request->getOrgId()));
