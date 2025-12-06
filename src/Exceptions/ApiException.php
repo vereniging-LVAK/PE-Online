@@ -1,5 +1,4 @@
 <?php
-// filepath: /Volumes/Development/pe-online/src/Exceptions/ApiException.php
 
 namespace PeOnline\Exceptions;
 

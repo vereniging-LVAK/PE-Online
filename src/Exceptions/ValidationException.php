@@ -1,5 +1,4 @@
 <?php
-// filepath: /Volumes/Development/pe-online/src/Exceptions/ValidationException.php
 
 namespace PeOnline\Exceptions;
 
