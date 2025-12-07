@@ -18,10 +18,12 @@ class PeOnlineClient
     private string $baseUrl; // base URL (for REST) or endpoint (for SOAP)
     private int $userId;
     private int $userKey;
+    private int $orgID;
 
-    public function __construct(string $baseUrl, string $userId, string $userKey)
+    public function __construct(string $baseUrl, string $userId, string $userKey, int $orgID)
     {
         $this->baseUrl = rtrim($baseUrl, '/');
+        $this->orgID = $orgID;
         $this->userId = $userId;
         $this->userKey = $userKey;
 
@@ -47,16 +49,12 @@ class PeOnlineClient
      */
     public function submitAttendanceXml( AttendanceRequest $request ): array 
     {
-        // Basic validation against required fields for XML submission
-        if (!$request->getOrgId()) {
-            throw new ValidationException('orgId is required', 1001);
-        }
 
         // Build the Entry XML (single Attendance). Use DOMDocument to ensure valid XML.
-        $entryXml = $this->buildEntryXml($request, $this->userId, $this->userKey);
+        $entryXml = $this->buildEntryXml($request, $this->userId, $this->userKey, $this->orgID);
 
         try {
-
+            echo $entryXml;
             $response = $this->httpClient->post($this->baseUrl, [
                 'form_params' => [
                     'sXML' => $entryXml,
@@ -75,7 +73,7 @@ class PeOnlineClient
     /**
      * Build the <Entry> XML according to the documentation.
      */
-    private function buildEntryXml(AttendanceRequest $request, string $userId, string $userKey): string
+    private function buildEntryXml(AttendanceRequest $request, string $userId, string $userKey, int $orgID): string
     {
         $doc = new \DOMDocument('1.0', 'utf-8');
         $doc->formatOutput = false;
@@ -89,7 +87,7 @@ class PeOnlineClient
         $settings->appendChild($doc->createElement('userID', $userId));
         $settings->appendChild($doc->createElement('userRole', 'EDU'));
         $settings->appendChild($doc->createElement('userKey', $userKey));
-        $settings->appendChild($doc->createElement('orgID', (string)$request->getOrgId()));
+        $settings->appendChild($doc->createElement('orgID', (string)$orgID));
         $settings->appendChild($doc->createElement('settingOutput', '1'));
         $settings->appendChild($doc->createElement('emailOutput', ''));
         $settings->appendChild($doc->createElement('languageID', '1'));
