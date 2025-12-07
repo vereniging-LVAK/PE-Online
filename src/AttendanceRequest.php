@@ -7,8 +7,7 @@ namespace PeOnline;
  */
 class AttendanceRequest
 {
-    private int $orgId;
-    private ?int $peCourseId = null;
+    private ?int $PECourseID = null;
     private ?string $externalCourseId = null;
     private ?int $pePersonId = null;
     private ?string $externalPersonId = null;
@@ -17,18 +16,16 @@ class AttendanceRequest
     private ?string $externalModuleId = null;
 
     public function __construct(
-        int $orgId,
-        string $endDate,
-        ?int $peCourseId = null,
+        ?string $endDate = null,
+        ?int $PECourseID = null,
         ?string $externalCourseId = null,
         ?int $pePersonId = null,
         ?string $externalPersonId = null,
         ?int $peModuleId = null,
         ?string $externalModuleId = null
     ) {
-        $this->orgId = $orgId;
         $this->endDate = $endDate;
-        $this->peCourseId = $peCourseId;
+        $this->PECourseID = $PECourseID;
         $this->externalCourseId = $externalCourseId;
         $this->pePersonId = $pePersonId;
         $this->externalPersonId = $externalPersonId;
@@ -36,14 +33,9 @@ class AttendanceRequest
         $this->externalModuleId = $externalModuleId;
     }
 
-    public function getOrgId(): int
+    public function getPECourseID(): ?int
     {
-        return $this->orgId;
-    }
-
-    public function getPeCourseId(): ?int
-    {
-        return $this->peCourseId;
+        return $this->PECourseID;
     }
 
     public function getExternalCourseId(): ?string
@@ -84,12 +76,11 @@ class AttendanceRequest
     public function toArray(): array
     {
         $data = [
-            'orgId' => $this->orgId,
             'endDate' => $this->endDate,
         ];
 
-        if ($this->peCourseId !== null) {
-            $data['peCourseId'] = $this->peCourseId;
+        if ($this->PECourseID !== null) {
+            $data['PECourseID'] = $this->PECourseID;
         }
 
         if ($this->externalCourseId !== null) {
