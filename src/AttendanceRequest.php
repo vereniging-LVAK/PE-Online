@@ -7,6 +7,7 @@ namespace PeOnline;
  */
 class AttendanceRequest
 {
+    private int $orgID;
     private ?int $PECourseID = null;
     private ?int $PEEditionID = null;
     private ?string $externalCourseId = null;
@@ -17,6 +18,7 @@ class AttendanceRequest
     private ?string $externalModuleId = null;
 
     public function __construct(
+        int $orgID,
         ?string $endDate = null,
         ?int $PECourseID = null,
         ?int $PEEditionID = null,
@@ -26,6 +28,7 @@ class AttendanceRequest
         ?int $peModuleId = null,
         ?string $externalModuleId = null
     ) {
+        $this->orgID = $orgID;
         $this->endDate = $endDate;
         $this->PECourseID = $PECourseID;
         $this->PEEditionID = $PEEditionID;
@@ -36,6 +39,11 @@ class AttendanceRequest
         $this->externalModuleId = $externalModuleId;
     }
 
+    public function getOrgID(): int
+    {
+        return $this->orgID;
+    }
+    
     public function getPECourseID(): ?int
     {
         return $this->PECourseID;

@@ -20,10 +20,9 @@ class PeOnlineClient
     private int $userKey;
     private int $orgID;
 
-    public function __construct(string $baseUrl, string $userId, string $userKey, int $orgID)
+    public function __construct(string $baseUrl, string $userId, string $userKey)
     {
         $this->baseUrl = rtrim($baseUrl, '/');
-        $this->orgID = $orgID;
         $this->userId = $userId;
         $this->userKey = $userKey;
 
@@ -51,7 +50,7 @@ class PeOnlineClient
     {
 
         // Build the Entry XML (single Attendance). Use DOMDocument to ensure valid XML.
-        $entryXml = $this->buildEntryXml($request, $this->userId, $this->userKey, $this->orgID);
+        $entryXml = $this->buildEntryXml($request, $this->userId, $this->userKey);
 
         try {
             echo $entryXml;
@@ -73,7 +72,7 @@ class PeOnlineClient
     /**
      * Build the <Entry> XML according to the documentation.
      */
-    private function buildEntryXml(AttendanceRequest $request, string $userId, string $userKey, int $orgID): string
+    private function buildEntryXml(AttendanceRequest $request, string $userId, string $userKey): string
     {
         $doc = new \DOMDocument('1.0', 'utf-8');
         $doc->formatOutput = false;
@@ -87,7 +86,7 @@ class PeOnlineClient
         $settings->appendChild($doc->createElement('userID', $userId));
         $settings->appendChild($doc->createElement('userRole', 'EDU'));
         $settings->appendChild($doc->createElement('userKey', $userKey));
-        $settings->appendChild($doc->createElement('orgID', (string)$orgID));
+        $settings->appendChild($doc->createElement('orgID', (string)$request->getOrgID()));
         $settings->appendChild($doc->createElement('settingOutput', '1'));
         $settings->appendChild($doc->createElement('emailOutput', ''));
         $settings->appendChild($doc->createElement('languageID', '1'));
@@ -214,6 +213,7 @@ class PeOnlineClient
                 $accepted[] = [
                     'person' => (string)($acc->person ?? ''),
                     'course' => (string)($acc->course ?? ''),
+                    'edition' => (string)($acc->edition ?? ''),
                     'meeting' => (string)($acc->meeting ?? ''),
                     'date' => (string)($acc->date ?? ''),
                 ];
