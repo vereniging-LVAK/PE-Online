@@ -53,7 +53,6 @@ class PeOnlineClient
         $entryXml = $this->buildEntryXml($request, $this->userId, $this->userKey);
 
         try {
-            echo $entryXml;
             $response = $this->httpClient->post($this->baseUrl, [
                 'form_params' => [
                     'sXML' => $entryXml,
