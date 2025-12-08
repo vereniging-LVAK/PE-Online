@@ -104,6 +104,10 @@ class PeOnlineClient
             $attendance->appendChild($doc->createElement('externalCourseID', $request->getExternalCourseId()));
         }
 
+        if ($request->getPEEditionID() !== null) {
+            $attendance->appendChild($doc->createElement('PEEditionID', (string)$request->getPEEditionID()));
+        }
+
         // Person: externalPersonID preferred
         if ($request->getExternalPersonId() !== null) {
             $attendance->appendChild($doc->createElement('externalPersonID', $request->getExternalPersonId()));
@@ -120,12 +124,14 @@ class PeOnlineClient
         }
 
         // endDate: the docs show ISO8601 timestamp; if only date provided, append time component.
-        $endDate = $request->getEndDate();
-        if (preg_match('/^\d{4}-\d{2}-\d{2}$/', $endDate)) {
-            // date-only, add midnight with timezone offset "+00:00"
-            $endDate = $endDate . 'T00:00:00+00:00';
+        if ( $request->getEndDate() !== null ) {
+            $endDate = $request->getEndDate();
+            if (preg_match('/^\d{4}-\d{2}-\d{2}$/', $endDate)) {
+                // date-only, add 9 AM with timezone offset "+00:00"
+                $endDate = $endDate . 'T09:00:00+00:00';
+            }
+            $attendance->appendChild($doc->createElement('endDate', $endDate));
         }
-        $attendance->appendChild($doc->createElement('endDate', $endDate));
 
         return $doc->saveXML();
     }
