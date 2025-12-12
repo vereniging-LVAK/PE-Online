@@ -1,7 +1,6 @@
 {
   "name": "vereniging-lvak/pe-online-api",
   "description": "PHP client library for PE-online attendance API",
-  "version": "1.3.0",
   "type": "library",
   "license": "MIT",
   "require": {
