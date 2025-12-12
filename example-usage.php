@@ -31,8 +31,9 @@ $client = new PeOnlineClient(
 // Use either PECourseID or externalCourseId, and either externalPersonId or pePersonId.
 // endDate should be ISO8601 (date or datetime). Example below uses date-only, which will be extended.
 $request = new AttendanceRequest(
-    endDate: '2024-09-27',
+    orgID: $orgID,
     PECourseID: '123456',
+    PEEditionID:  '7654321',
     externalPersonId: 'BIG-123456'
 );
 

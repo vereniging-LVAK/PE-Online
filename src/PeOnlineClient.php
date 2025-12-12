@@ -20,10 +20,9 @@ class PeOnlineClient
     private int $userKey;
     private int $orgID;
 
-    public function __construct(string $baseUrl, string $userId, string $userKey, int $orgID)
+    public function __construct(string $baseUrl, string $userId, string $userKey)
     {
         $this->baseUrl = rtrim($baseUrl, '/');
-        $this->orgID = $orgID;
         $this->userId = $userId;
         $this->userKey = $userKey;
 
@@ -51,10 +50,9 @@ class PeOnlineClient
     {
 
         // Build the Entry XML (single Attendance). Use DOMDocument to ensure valid XML.
-        $entryXml = $this->buildEntryXml($request, $this->userId, $this->userKey, $this->orgID);
+        $entryXml = $this->buildEntryXml($request, $this->userId, $this->userKey);
 
         try {
-            echo $entryXml;
             $response = $this->httpClient->post($this->baseUrl, [
                 'form_params' => [
                     'sXML' => $entryXml,
@@ -73,7 +71,7 @@ class PeOnlineClient
     /**
      * Build the <Entry> XML according to the documentation.
      */
-    private function buildEntryXml(AttendanceRequest $request, string $userId, string $userKey, int $orgID): string
+    private function buildEntryXml(AttendanceRequest $request, string $userId, string $userKey): string
     {
         $doc = new \DOMDocument('1.0', 'utf-8');
         $doc->formatOutput = false;
@@ -87,7 +85,7 @@ class PeOnlineClient
         $settings->appendChild($doc->createElement('userID', $userId));
         $settings->appendChild($doc->createElement('userRole', 'EDU'));
         $settings->appendChild($doc->createElement('userKey', $userKey));
-        $settings->appendChild($doc->createElement('orgID', (string)$orgID));
+        $settings->appendChild($doc->createElement('orgID', (string)$request->getOrgID()));
         $settings->appendChild($doc->createElement('settingOutput', '1'));
         $settings->appendChild($doc->createElement('emailOutput', ''));
         $settings->appendChild($doc->createElement('languageID', '1'));
@@ -102,6 +100,10 @@ class PeOnlineClient
             $attendance->appendChild($doc->createElement('PECourseID', (string)$request->getPeCourseId()));
         } elseif ($request->getExternalCourseId() !== null) {
             $attendance->appendChild($doc->createElement('externalCourseID', $request->getExternalCourseId()));
+        }
+
+        if ($request->getPEEditionID() !== null) {
+            $attendance->appendChild($doc->createElement('PEEditionID', (string)$request->getPEEditionID()));
         }
 
         // Person: externalPersonID preferred
@@ -120,12 +122,14 @@ class PeOnlineClient
         }
 
         // endDate: the docs show ISO8601 timestamp; if only date provided, append time component.
-        $endDate = $request->getEndDate();
-        if (preg_match('/^\d{4}-\d{2}-\d{2}$/', $endDate)) {
-            // date-only, add midnight with timezone offset "+00:00"
-            $endDate = $endDate . 'T00:00:00+00:00';
+        if ( $request->getEndDate() !== null ) {
+            $endDate = $request->getEndDate();
+            if (preg_match('/^\d{4}-\d{2}-\d{2}$/', $endDate)) {
+                // date-only, add 9 AM with timezone offset "+00:00"
+                $endDate = $endDate . 'T09:00:00+00:00';
+            }
+            $attendance->appendChild($doc->createElement('endDate', $endDate));
         }
-        $attendance->appendChild($doc->createElement('endDate', $endDate));
 
         return $doc->saveXML();
     }
@@ -208,6 +212,7 @@ class PeOnlineClient
                 $accepted[] = [
                     'person' => (string)($acc->person ?? ''),
                     'course' => (string)($acc->course ?? ''),
+                    'edition' => (string)($acc->edition ?? ''),
                     'meeting' => (string)($acc->meeting ?? ''),
                     'date' => (string)($acc->date ?? ''),
                 ];
